@@ -6,9 +6,11 @@ package qclient
 // - Consistent hashing implementation equivalient to the python version
 
 import ("encoding/json"
-	"fmt"
 	"net/url"
-	"net/http")
+	"net/http"
+	"io/ioutil"
+	"io"
+	"log")
 
 type QClient struct {
 	nodes []string
@@ -31,16 +33,32 @@ func (c *QClient) Query(key string, q string) string {
 }
 
 
-func (c *QClient) Get(key string, q Query) string {
+func (c *QClient) Get(key string, q Query) ([]byte, error) {
 	jq, _ := json.Marshal(q)
-	fmt.Printf(string(jq[:]) + "\n")
 	ujq := url.QueryEscape(string(jq[:]))
-	fmt.Printf("Result: %s\n", ujq)
-	http.Get(c.nodes[0] + "/qcache/dataset/" + key + "?q=" + ujq)
-	return "hello"
+	response, err := http.Get(c.nodes[0] + "/qcache/dataset/" + key + "?q=" + ujq)
+
+	if err != nil {
+		log.Fatal("Error getting data: ", err)
+	}
+
+	if response.StatusCode != 200 {
+		return nil, nil
+	}
+
+	defer response.Body.Close()
+        contents, _ := ioutil.ReadAll(response.Body)
+	
+	return contents, nil
 }
 
 
-func New(nodes []string) *QClient {
+func (c *QClient) Post(key string, bodyType string, body io.Reader) error {
+	_, err := http.Post(c.nodes[0] + "/qcache/dataset/" + key, bodyType, body)
+	return err
+}
+
+
+func NewClient(nodes []string) *QClient {
 	return &QClient{nodes: nodes}
 }
