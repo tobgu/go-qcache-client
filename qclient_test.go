@@ -1,11 +1,12 @@
 package qclient
 
-import ("testing"
+import (
+	"bytes"
 	"encoding/csv"
 	"encoding/json"
-	"bytes"
 	"log"
 	"os/exec"
+	"testing"
 	"time"
 )
 
@@ -33,12 +34,11 @@ func TestQuery(t *testing.T) {
 	}
 }
 
-
 func init() {
 	cmd := exec.Command("docker", "kill", "qcache-go-test")
 	cmd.Run()
-	
-     	cmd = exec.Command(
+
+	cmd = exec.Command(
 		"docker", "run", "--rm", "-p", "9401:9401", "--name", "qcache-go-test", "tobgu/qcache")
 	err := cmd.Start()
 	if err != nil {
@@ -58,7 +58,7 @@ func TestGetPostGet(t *testing.T) {
 		t.Errorf("Did not expect any result before inserting data!")
 	}
 
-	// Prepare and post CSV	
+	// Prepare and post CSV
 	records := [][]string{
 		{"foo", "bar"},
 		{"x", "1"},
@@ -66,7 +66,7 @@ func TestGetPostGet(t *testing.T) {
 		{"z", "100"},
 	}
 
-	var buf bytes.Buffer;
+	var buf bytes.Buffer
 	w := csv.NewWriter(&buf)
 	w.WriteAll(records) // calls Flush internally
 

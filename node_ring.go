@@ -1,16 +1,16 @@
 package qclient
 
 import (
-	"sort"
+	"crypto/md5"
+	"errors"
 	"fmt"
 	"math"
-	"crypto/md5"
-"errors"
+	"sort"
 )
 
 type nodeRing struct {
-	nodeMap map[int]string
-	sortedKeys []int
+	nodeMap      map[int]string
+	sortedKeys   []int
 	virtualCount int
 }
 
@@ -30,8 +30,8 @@ func keysForNode(node string, virtualCount int) []int {
 
 func newNodeRing(nodes []string) nodeRing {
 	ring := nodeRing{nodeMap: make(map[int]string),
-			 sortedKeys: make([]int, 0),
-			 virtualCount: int(math.Ceil(1000.0/float64(len(nodes))))}
+		sortedKeys:   make([]int, 0),
+		virtualCount: int(math.Ceil(1000.0 / float64(len(nodes))))}
 	ring.addNodes(nodes)
 	return ring
 }
@@ -73,7 +73,7 @@ func (ring *nodeRing) removeNode(node string) {
 	ring.sortedKeys = newSortedKeys
 }
 
-func (ring *nodeRing)getNode(tableKey string) (string, error) {
+func (ring *nodeRing) getNode(tableKey string) (string, error) {
 	if len(ring.sortedKeys) == 0 {
 		return "", errors.New("No nodes available")
 	}

@@ -5,14 +5,15 @@ package qclient
 // - Basic GET query
 // - Consistent hashing implementation equivalent to the python version
 
-import ("encoding/json"
-	"net/url"
-	"net/http"
-	"io/ioutil"
-	"io"
-	"log"
+import (
+	"encoding/json"
 	"errors"
 	"fmt"
+	"io"
+	"io/ioutil"
+	"log"
+	"net/http"
+	"net/url"
 )
 
 type QClient struct {
@@ -22,14 +23,14 @@ type QClient struct {
 type Clause []interface{}
 
 type Query struct {
-	Select   Clause         `json:"select,omitempty"`
-	Where    Clause         `json:"where,omitempty"`
-	OrderBy  []string       `json:"order_by,omitempty"`
-	GroupBy  []string       `json:"group_by,omitempty"`
-	Distinct []string       `json:"distinct,omitempty"`
-	Offset   int            `json:"offset,omitempty"`
-	Limit    int            `json:"limit,omitempty"`
-	From     *Query         `json:"from,omitempty"`
+	Select   Clause   `json:"select,omitempty"`
+	Where    Clause   `json:"where,omitempty"`
+	OrderBy  []string `json:"order_by,omitempty"`
+	GroupBy  []string `json:"group_by,omitempty"`
+	Distinct []string `json:"distinct,omitempty"`
+	Offset   int      `json:"offset,omitempty"`
+	Limit    int      `json:"limit,omitempty"`
+	From     *Query   `json:"from,omitempty"`
 }
 
 func And(clauses ...Clause) Clause {
@@ -88,12 +89,10 @@ func (c *QClient) Get(key string, q Query) ([]byte, error) {
 	return contents, nil
 }
 
-
 func (c *QClient) Post(key string, bodyType string, body io.Reader) error {
-	_, err := http.Post(c.nodes[0] + "/qcache/dataset/" + key, bodyType, body)
+	_, err := http.Post(c.nodes[0]+"/qcache/dataset/"+key, bodyType, body)
 	return err
 }
-
 
 func NewClient(nodes []string) *QClient {
 	return &QClient{nodes: nodes}
