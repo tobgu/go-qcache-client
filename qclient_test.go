@@ -7,14 +7,7 @@ import ("testing"
 	"log"
 	"os/exec"
 	"time"
-	"reflect"
-	"fmt")
-
-// Emacs
-// -----
-// godef describe - C-c C-d
-// godef jump - M-.   (own binding)
-
+)
 
 // Command line
 // ------------
@@ -59,7 +52,7 @@ func init() {
 func TestGetPostGet(t *testing.T) {
 	client := NewClient([]string{"http://localhost:9401"})
 	key := "baz"
-	query := Query{Where: []interface{}{"&", []interface{}{"==", "bar", 10}}}
+	query := Query{Where: And(Eq("bar", 10))}
 	result, _ := client.Get(key, query)
 	if result != nil {
 		t.Errorf("Did not expect any result before inserting data!")
