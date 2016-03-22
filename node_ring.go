@@ -20,7 +20,7 @@ func generateKey(key string) int {
 }
 
 func keysForNode(node string, virtualCount int) []int {
-	keys := make([]int, virtualCount)
+	keys := make([]int, 0, virtualCount)
 	for i := 0; i < virtualCount; i++ {
 		keys = append(keys, generateKey(fmt.Sprintf("%s-%s", node, i)))
 	}
@@ -28,12 +28,16 @@ func keysForNode(node string, virtualCount int) []int {
 	return keys
 }
 
-func newNodeRing(nodes []string) nodeRing {
+func newNodeRing(nodes []string) (*nodeRing, error) {
+	if len(nodes) == 0 {
+		return nil, errors.New("Node ring requires nodes")
+	}
+
 	ring := nodeRing{nodeMap: make(map[int]string),
-		sortedKeys:   make([]int, 0),
+		sortedKeys:   make([]int, 0, 1000),
 		virtualCount: int(math.Ceil(1000.0 / float64(len(nodes))))}
 	ring.addNodes(nodes)
-	return ring
+	return &ring, nil
 }
 
 func (ring *nodeRing) addNodes(nodes []string) {
@@ -73,12 +77,12 @@ func (ring *nodeRing) removeNode(node string) {
 	ring.sortedKeys = newSortedKeys
 }
 
-func (ring *nodeRing) getNode(tableKey string) (string, error) {
+func (ring *nodeRing) getNode(stringKey string) (string, error) {
 	if len(ring.sortedKeys) == 0 {
 		return "", errors.New("No nodes available")
 	}
 
-	key := generateKey(tableKey)
+	key := generateKey(stringKey)
 	pos := sort.Search(len(ring.sortedKeys), func(i int) bool { return ring.sortedKeys[i] >= key })
 	pos %= len(ring.sortedKeys)
 	return ring.nodeMap[ring.sortedKeys[pos]], nil

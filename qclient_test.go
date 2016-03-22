@@ -1,9 +1,10 @@
-package qclient
+package qclient_test
 
 import (
 	"bytes"
 	"encoding/csv"
 	"encoding/json"
+	"github.com/tobgu/go-qcache-client"
 	"log"
 	"os/exec"
 	"testing"
@@ -18,6 +19,9 @@ import (
 // go build    - Build package but don't produce any output
 // go run      - Build and run
 
+var and = qclient.And
+var eq = qclient.Eq
+
 func TestQuery(t *testing.T) {
 	cases := []struct {
 		in, want string
@@ -25,7 +29,7 @@ func TestQuery(t *testing.T) {
 		{"Hello, world", "hello"},
 	}
 
-	var client = NewClient([]string{""})
+	var client = qclient.NewClient([]string{""})
 	for _, c := range cases {
 		got := client.Query(c.in, c.in)
 		if got != c.want {
@@ -50,9 +54,9 @@ func init() {
 }
 
 func TestGetPostGet(t *testing.T) {
-	client := NewClient([]string{"http://localhost:9401"})
+	client := qclient.NewClient([]string{"http://localhost:9401"})
 	key := "baz"
-	query := Query{Where: And(Eq("bar", 10))}
+	query := qclient.Query{Where: and(eq("bar", 10))}
 	result, _ := client.Get(key, query)
 	if result != nil {
 		t.Errorf("Did not expect any result before inserting data!")
