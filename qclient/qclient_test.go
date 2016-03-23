@@ -4,7 +4,7 @@ import (
 	"bytes"
 	"encoding/csv"
 	"encoding/json"
-	"github.com/tobgu/go-qcache-client"
+	"github.com/tobgu/go-qcache-client/qclient"
 	"log"
 	"os/exec"
 	"testing"
