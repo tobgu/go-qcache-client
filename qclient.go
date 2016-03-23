@@ -17,7 +17,7 @@ import (
 )
 
 type QClient struct {
-	nodes []string
+	ring *nodeRing
 }
 
 type Clause []interface{}
@@ -66,7 +66,12 @@ func (c *QClient) Query(key string, q string) string {
 func (c *QClient) Get(key string, q Query) ([]byte, error) {
 	jq, _ := json.Marshal(q)
 	ujq := url.QueryEscape(string(jq[:]))
-	response, err := http.Get(c.nodes[0] + "/qcache/dataset/" + key + "?q=" + ujq)
+	node, err := c.ring.getNode(key)
+	if err != nil {
+		return nil, err
+	}
+
+	response, err := http.Get(node + "/qcache/dataset/" + key + "?q=" + ujq)
 
 	if err != nil {
 		log.Fatal("Error getting data: ", err)
@@ -90,10 +95,15 @@ func (c *QClient) Get(key string, q Query) ([]byte, error) {
 }
 
 func (c *QClient) Post(key string, bodyType string, body io.Reader) error {
-	_, err := http.Post(c.nodes[0]+"/qcache/dataset/"+key, bodyType, body)
+	node, err := c.ring.getNode(key)
+	if err != nil {
+		return err
+	}
+	_, err = http.Post(node+"/qcache/dataset/"+key, bodyType, body)
 	return err
 }
 
 func NewClient(nodes []string) *QClient {
-	return &QClient{nodes: nodes}
+	ring, _ := newNodeRing(nodes)
+	return &QClient{ring: ring}
 }
