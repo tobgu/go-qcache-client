@@ -1,9 +1,4 @@
-// Package stringutil contains utility functions for working with strings.
 package qclient
-
-// - Basic POST query
-// - Basic GET query
-// - Consistent hashing implementation equivalent to the python version
 
 import (
 	"encoding/json"
