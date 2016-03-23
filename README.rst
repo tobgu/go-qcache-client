@@ -20,7 +20,7 @@ Documentation is close to non-existent right now. Please see the tests in qclien
 
 Contributing
 ============
-Want to contribute? That's great!
+Want to contribute? That's great! I'm new to Go so any feedback on the code is extra welcome!
 
 If you experience problems please log them on GitHub. If you want to contribute code,
 please fork the code and submit a pull request.
@@ -34,3 +34,4 @@ TODO
 - Query method similar to that in the python client
 - Documentation
 - Possibility to POST large queries
+- Support CSV
