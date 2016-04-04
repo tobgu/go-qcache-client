@@ -58,7 +58,6 @@ func TestDistribution(t *testing.T) {
 	assert.Equal(t, revampedDistribution, initialDistribution)
 }
 
-
 func TestNotPossibleToCreateRingWithoutNodes(t *testing.T) {
 	ring, err := newNodeRing([]string{})
 	assert.Nil(t, ring)

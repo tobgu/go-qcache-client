@@ -88,8 +88,12 @@ func TestGetPostGet(t *testing.T) {
 		t.Errorf("Expected result after inserting data!")
 	}
 
+	if result.UnslicedResultLen != 1 {
+		t.Errorf("Invalid unsliced length, was %d, expected 1", result.UnslicedResultLen)
+	}
+
 	var f []interface{}
-	json.Unmarshal(result, &f)
+	json.Unmarshal(result.Content, &f)
 
 	r := f[0].(map[string]interface{})
 	if !(r["foo"].(string) == "y" && r["bar"].(float64) == 10) {
